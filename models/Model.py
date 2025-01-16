@@ -3,6 +3,9 @@ from random import randint
 from models.Database import Database
 from models.Stopwatch import Stopwatch
 
+from tabulate import tabulate
+from datetime import datetime
+
 
 class Model:
     #Defineerime kalssi muutujad
@@ -81,7 +84,7 @@ class Model:
                 self.rest_game()# Nulli mäng ära
                 self.let_paly() # Alusta uut mängu
             elif user_input == 2:
-                self.show_leaderboard() # Näita edetabelit
+                self.show_no_change() # Näita edetabelit
                 self.show_menu() #Näita menüüd
             elif user_input == 3:
                 print('Bye,bye :)')
@@ -90,15 +93,54 @@ class Model:
         else:
             self.show_menu()
 
+#Minu loodud tabel, kellaaja vormindamine poolik
     @staticmethod
+    def format_time(seconds):
+        hours = seconds // 3600 # Toppeltkaldkriips ei arvestata jääki võetakse täis osa
+        minutes = (seconds % 3600) // 60
+        seconds = seconds % 60
+        #return "%02d:%02d:%02d" % (hours, minutes, seconds) sama, mis teine return
+        return f'{hours:02}:{minutes:02}:{seconds:02}'
+
+
+#Õpetaja tehtud, minu täiendatud, kriipsud on minu tabel
+    def manual_table(self, data):
+        print('Nimi               Number   Sammud    Mänguaeg')
+        for row in data:
+            print('----------------------------------------------------')
+            print(f'{row[0][:15]:<16} | {row[1]:>6} | {row[2]:>6} | {self.format_time(row[3]):>9}')
+
+
+    def show_no_change(self):
+        """Edetabel asatele mängijatele"""
+        db= Database()
+        data = db.no_cheater()
+        if data:
+            #Vormindus funksioon veerule
+            formatters = {'Mängu aeg': self.format_time,}
+            print() #Tühirida enne endetabelit
+            #self.print_tabel(data,formatters)
+            self.manual_table(data)
+            print()
+
+    @staticmethod #Näitab kõike, ei ole vormindatud
     def show_leaderboard():
-        """Näita edetabelit"""
         db = Database()
         data = db.read_records()
         if data:
             for record in data:
                 print(record) # Hetkel näitab tervet listi, kui tahad näha nt ainult nimesid: print(record[1])
 
+    @staticmethod# Minu tehtud tabel
+    def my_table():
+        db = Database()
+        data = db.no_cheater()
+        if data:
+            formatted_data = [
+                (row[0], row[1], row[2], Model.format_time(row[3])) for row in data
+            ]
+            headers = ["Nimi", "Arvatav number", "Sammud", "Mängu kestus"]
 
-
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(tabulate(formatted_data, headers=headers, tablefmt="pretty")) # Hetkel näitab tervet listi, kui tahad näha nt ainult nimesid: print(record[1])
 

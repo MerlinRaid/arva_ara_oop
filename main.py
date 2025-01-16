@@ -4,10 +4,16 @@
 from models.Model import Model
 #from models.Stopwatch import Stopwatch # katsetuste jaoks
 
+"""
+1. Tehke meetod no_cheater() <database klassi, mis tagastab ainult ausad mängijad.
+2. Näita edetabelis ainult ausaid mängijaid nind edetabelis näita nimi, äraarvatav number, sammude arv ja aeg (00:00:00) ilusti.
+Nimest näita ainult 15 esimest tähte kui on pikem nimi. 
+"""
 
 if __name__ == '__main__':
     model = Model()
     model.show_menu()
+
     #TODO Järgnev rida oli show_menu osa
     #model.let_paly() #kui on see ainult siis käivitab mäng kohe ja menüü tuleb pärast mängu ei pea ole show_menu'd
 

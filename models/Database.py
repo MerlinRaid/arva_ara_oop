@@ -1,5 +1,7 @@
 import sqlite3
 
+from models.Stopwatch import Stopwatch
+
 
 class Database:
     db_name = 'game_leaderboard_v2.db' # Andmebaasinimi
@@ -33,21 +35,22 @@ class Database:
         except sqlite3.Error as error:
             print(f'Tõrge ühenduse sulgemisel: {error}')
 
-    def read_records(self):
-        """Loeme andmebaasist kogu edetabeli"""
+    def no_cheater(self):
+        """Loeme andmebaasist infot, kus on kuvatud ainult ausad mängijad """
         if self.cursor:
-            try:
-                sql = f'SELECT * FROM {self.tabel};' # Päring andmebaasi
-                self.cursor.execute(sql) # Käivita see päring
-                data = self.cursor.fetchall() #Kõik kirjed muutujasse data
-                return data #Tagastab kõik andmebaasi kirjed
-            except sqlite3.Error as error:
-                print(f'Kirjete lugemisel ilmnes tõrge: {error}')
-                return [] #tagastab tühja listi
-            finally:
-                self.close_connection()  #Katkesta ühendus
+                try:
+                    sql = f'SELECT SUBSTR(name, 1, 15) AS name, quess, steps, game_length FROM {self.tabel} WHERE cheater=?;'# Päring andmebaasi
+                    self.cursor.execute(sql, (0,)) # Käivita see päring
+                    data = self.cursor.fetchall() #Kõik kirjed muutujasse data
+                    return data #Tagastab kõik andmebaasi kirjed
+                except sqlite3.Error as error:
+                    print(f'Kirjete lugemisel ilmnes tõrge: {error}')
+                    return [] #tagastab tühja listi
+                finally:
+                    self.close_connection()  #Katkesta ühendus
         else:
             print('Ühenduse andmebaasiga puudub. Palun loo ühendus andmebaasiga')
+
 
     def add_record(self, name, steps, pc_nr, cheater, seconds):
         """Lisab mängija andmed tabelisse"""
@@ -64,4 +67,18 @@ class Database:
         else:
             print('Ühendus puudub! Palun loo ühendus andmebaasiga.')
 
-
+"""def read_records(self):
+        Loeme andmebaasist kogu edetabeli
+        if self.cursor:
+            try:
+                sql = f'SELECT * FROM {self.tabel};'  # Päring andmebaasi
+                self.cursor.execute(sql)  # Käivita see päring
+                data = self.cursor.fetchall()  # Kõik kirjed muutujasse data
+                return data  # Tagastab kõik andmebaasi kirjed
+            except sqlite3.Error as error:
+                print(f'Kirjete lugemisel ilmnes tõrge: {error}')
+                return []  # tagastab tühja listi
+            finally:
+                self.close_connection()  # Katkesta ühendus
+        else:
+            print('Ühenduse andmebaasiga puudub. Palun loo ühendus andmebaasiga')"""
