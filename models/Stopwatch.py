@@ -20,8 +20,9 @@ class Stopwatch:
     def _run(self):
         """Aeg jookseb threadis"""
         while self.running:
+            self.seconds += 1  # Suurenda sekundit ühe võrra
             time.sleep(1) # Oota 1 sekund
-            self.seconds += 1 #Suurenda sekundit ühe võrra
+
 
     def stop(self):
         """Peata stopper"""
