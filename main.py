@@ -7,6 +7,12 @@ from models.Model import Model
 
 if __name__ == '__main__':
     model = Model()
+    model.show_menu()
+    #TODO Järgnev rida oli show_menu osa
+    #model.let_paly() #kui on see ainult siis käivitab mäng kohe ja menüü tuleb pärast mängu ei pea ole show_menu'd
+
+
+
 
 """proovimine, kas numbri küsimine töötab ja aega jookseb ilusti
     model.ask()

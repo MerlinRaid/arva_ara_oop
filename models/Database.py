@@ -48,3 +48,20 @@ class Database:
                 self.close_connection()  #Katkesta ühendus
         else:
             print('Ühenduse andmebaasiga puudub. Palun loo ühendus andmebaasiga')
+
+    def add_record(self, name, steps, pc_nr, cheater, seconds):
+        """Lisab mängija andmed tabelisse"""
+        if self.cursor:
+            try:
+                sql = f'INSERT INTO {self.tabel} (name, steps, quess, cheater, game_length) VALUES (?, ?, ?, ?, ?);'
+                self.cursor.execute(sql, (name, steps, pc_nr, cheater, seconds)) #Nende kahe rejaga üritab phyton lisada anmeid andmebaasi
+                self.conn.commit() #See lisab reaalselt tabelisse (save)
+                print('Mängija on listaud tabelisse!')
+            except sqlite3.Error as error:
+                print(f'Mängija lisamisel tekkis tõrge {error}')
+            finally:
+                self.close_connection()
+        else:
+            print('Ühendus puudub! Palun loo ühendus andmebaasiga.')
+
+
