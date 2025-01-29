@@ -36,21 +36,46 @@ class Database:
             print(f'Tõrge ühenduse sulgemisel: {error}')
 
     def no_cheater(self):
-        """Loeme andmebaasist infot, kus on kuvatud ainult ausad mängijad """
+        """Loeme andmebaasist infot, kus on kuvatud ainult ausad mängijad, sorteeritult ja piiratud 10 mängijaga"""
         if self.cursor:
-                try:
-                    sql = f'SELECT SUBSTR(name, 1, 15) AS name, quess, steps, game_length FROM {self.tabel} WHERE cheater=?;'# Päring andmebaasi
-                    self.cursor.execute(sql, (0,)) # Käivita see päring
-                    data = self.cursor.fetchall() #Kõik kirjed muutujasse data
-                    return data #Tagastab kõik andmebaasi kirjed
-                except sqlite3.Error as error:
-                    print(f'Kirjete lugemisel ilmnes tõrge: {error}')
-                    return [] #tagastab tühja listi
-                finally:
-                    self.close_connection()  #Katkesta ühendus
+            try:
+                sql = f'''
+                    SELECT name, quess, steps, game_length 
+                    FROM {self.tabel} 
+                    WHERE cheater = ? 
+                    ORDER BY steps ASC, game_length ASC, name ASC 
+                    LIMIT 10;
+                '''  # Sorteeri ja piirdu 10 mängijaga
+                self.cursor.execute(sql, (0,))  # Käivita see päring
+                data = self.cursor.fetchall()  # Kõik kirjed muutujasse data
+                return data  # Tagastab kõik andmebaasi kirjed
+            except sqlite3.Error as error:
+                print(f'Kirjete lugemisel ilmnes tõrge: {error}')
+                return []  # Tagastab tühja listi
+            finally:
+                self.close_connection()  # Katkesta ühendus
         else:
             print('Ühenduse andmebaasiga puudub. Palun loo ühendus andmebaasiga')
 
+    def for_export(self):
+        """Tagastab kogu andmebaasi sisu (kõik veerud), sorteeritult sama moodi nagu no_cheater()"""
+        if self.cursor:
+            try:
+                sql = f'''
+                    SELECT * 
+                    FROM {self.tabel} 
+                    ORDER BY steps ASC, game_length ASC, name ASC;
+                '''  # Kogu tabel, sama sorteerimine
+                self.cursor.execute(sql)  # Käivita see päring
+                data = self.cursor.fetchall()  # Kõik kirjed muutujasse data
+                return data  # Tagastab kõik andmebaasi kirjed
+            except sqlite3.Error as error:
+                print(f'Kirjete lugemisel ilmnes tõrge: {error}')
+                return []  # Tagastab tühja listi
+            finally:
+                self.close_connection()  # Katkesta ühendus
+        else:
+            print('Ühenduse andmebaasiga puudub. Palun loo ühendus andmebaasiga')
 
     def add_record(self, name, steps, pc_nr, cheater, seconds):
         """Lisab mängija andmed tabelisse"""

@@ -2,6 +2,7 @@ from random import randint
 
 from models.Database import Database
 from models.Stopwatch import Stopwatch
+from models.ExportToFile import ExportToFile
 
 from tabulate import tabulate
 from datetime import datetime
@@ -84,7 +85,9 @@ class Model:
                 self.rest_game()# Nulli mäng ära
                 self.let_paly() # Alusta uut mängu
             elif user_input == 2:
-                self.show_no_change() # Näita edetabelit
+                #self.show_leaderboard()
+                #self.my_table() # Näita edetabelit
+                self.show_no_cheater()
                 self.show_menu() #Näita menüüd
             elif user_input == 3:
                 print('Bye,bye :)')
@@ -111,7 +114,7 @@ class Model:
             print(f'{row[0][:15]:<16} | {row[1]:>6} | {row[2]:>6} | {self.format_time(row[3]):>9}')
 
 
-    def show_no_change(self):
+    def show_no_cheater(self):
         """Edetabel asatele mängijatele"""
         db= Database()
         data = db.no_cheater()
@@ -119,8 +122,8 @@ class Model:
             #Vormindus funksioon veerule
             formatters = {'Mängu aeg': self.format_time,}
             print() #Tühirida enne endetabelit
-            #self.print_tabel(data,formatters)
             self.manual_table(data)
+            ExportToFile(self).export()
             print()
 
     @staticmethod #Näitab kõike, ei ole vormindatud
@@ -136,11 +139,10 @@ class Model:
         db = Database()
         data = db.no_cheater()
         if data:
+            headers = ["Nimi", "Arvatav number", "Sammud", "Mängu kestus"]
             formatted_data = [
                 (row[0], row[1], row[2], Model.format_time(row[3])) for row in data
             ]
-            headers = ["Nimi", "Arvatav number", "Sammud", "Mängu kestus"]
 
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print(tabulate(formatted_data, headers=headers, tablefmt="pretty")) # Hetkel näitab tervet listi, kui tahad näha nt ainult nimesid: print(record[1])
 

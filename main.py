@@ -17,6 +17,15 @@ if __name__ == '__main__':
     #TODO Järgnev rida oli show_menu osa
     #model.let_paly() #kui on see ainult siis käivitab mäng kohe ja menüü tuleb pärast mängu ei pea ole show_menu'd
 
+"""from models.Database import Database
+db = Database()  
+data = db.for_export()  
+if data:
+    for row in data:
+        print(row)  
+else:
+    print("Andmebaasis ei ole kirjeid või esines viga!")""" #Kontroll, kas kogu tabeli export toimib
+
 
 
 
